@@ -32,11 +32,13 @@ func Provider() *schema.Provider {
 			"keep_provider":   resourceProvider(),
 			"keep_workflow":   resourceWorkflow(),
 			"keep_mapping":    resourceMapping(),
+			"keep_apikey":     resourceApiKey(),
 			"keep_extraction": resourceExtraction(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"keep_workflow": dataSourceWorkflows(),
 			"keep_mapping":  dataSourceMapping(),
+			"keep_apikey":   dataSourceApiKey(),
 		},
 		ConfigureContextFunc: ClientConfigurer,
 	}

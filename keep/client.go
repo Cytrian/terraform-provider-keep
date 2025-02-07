@@ -436,6 +436,72 @@ func (c *Client) DeleteMapping(id string) (*ErrorResponse, error) {
 	return nil, nil
 }
 
+// APIKey API methods
+func (c *Client) GetApiKeys() ([]interface{}, *ErrorResponse, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/settings/apikeys", c.HostURL), nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	body, errResp, err := c.doReq(req)
+	if err != nil {
+		return nil, errResp, err
+	}
+
+	var raw map[string]json.RawMessage
+
+	// Unmarshal into a generic map
+	if err := json.Unmarshal(body, &raw); err != nil {
+		return nil, errResp, err
+	}
+
+	var apikeys []interface{}
+	if err := json.Unmarshal(raw["apiKeys"], &apikeys); err != nil {
+		return nil, nil, err
+	}
+
+	return apikeys, nil, nil
+}
+
+func (c *Client) CreateApiKey(apikey map[string]interface{}) (map[string]interface{}, *ErrorResponse, error) {
+	payload, err := json.Marshal(apikey)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/settings/apikey", c.HostURL),
+		strings.NewReader(string(payload)))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	body, errResp, err := c.doReq(req)
+	if err != nil {
+		return nil, errResp, err
+	}
+
+	var response map[string]interface{}
+	if err := json.Unmarshal(body, &response); err != nil {
+		return nil, nil, err
+	}
+
+	return response, nil, nil
+}
+
+func (c *Client) DeleteApiKey(id string) (*ErrorResponse, error) {
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/settings/apikey/%s", c.HostURL, id), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	_, errResp, err := c.doReq(req)
+	if err != nil {
+		return errResp, err
+	}
+
+	return nil, nil
+}
+
 // Extraction API methods
 func (c *Client) GetExtractions() ([]interface{}, *ErrorResponse, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/extraction", c.HostURL), nil)

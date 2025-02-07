@@ -7,7 +7,7 @@ build:
 	go build -o ${BINARY}
 
 install: build
-	mv ${BINARY} /Users/pehlivan/.terraform.d/plugins/terraform.local/local/keep/1.0.0/darwin_arm64/${BINARY}_v1.0.0
+	mv ${BINARY} ${HOME}/.terraform.d/plugins/terraform.local/local/keep/1.0.0/darwin_arm64/${BINARY}_v1.0.0
 
 test:
 	go test -i $(TEST) || exit 1

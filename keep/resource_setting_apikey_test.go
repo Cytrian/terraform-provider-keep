@@ -25,10 +25,7 @@ func TestAccResourceApiKey_basic(t *testing.T) {
 					resource.TestCheckResourceAttr("keep_apikey.test", "name", "test-key"),
 					resource.TestCheckResourceAttr("keep_apikey.test", "role", "admin"),
 					resource.TestCheckResourceAttrSet("keep_apikey.test", "reference_id"),
-					resource.TestCheckResourceAttrSet("keep_apikey.test", "created_at"),
-					resource.TestCheckResourceAttrSet("keep_apikey.test", "created_by"),
 					resource.TestCheckResourceAttrSet("keep_apikey.test", "secret"),
-					resource.TestCheckResourceAttr("keep_apikey.test", "is_deleted", "false"),
 				),
 			},
 			{
@@ -37,8 +34,8 @@ func TestAccResourceApiKey_basic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckApiKeyExists("keep_apikey.test", &apiKeyID),
 					// Name and role shouldn't change as updates aren't supported
-					resource.TestCheckResourceAttr("keep_apikey.test", "name", "test-key-updated"),
-					resource.TestCheckResourceAttr("keep_apikey.test", "role", "viewer"),
+					resource.TestCheckResourceAttr("keep_apikey.test", "name", "test-key"),
+					resource.TestCheckResourceAttr("keep_apikey.test", "role", "admin"),
 				),
 			},
 			/*			{

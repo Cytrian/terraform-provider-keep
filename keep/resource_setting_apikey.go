@@ -26,16 +26,6 @@ func resourceApiKey() *schema.Resource {
 				Computed:    true,
 				Description: "Reference of the ApiKey",
 			},
-			"created_at": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Creation time of the ApiKey",
-			},
-			"created_by": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Creator of the ApiKey",
-			},
 			"secret": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -46,11 +36,6 @@ func resourceApiKey() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Role of the ApiKey",
-			},
-			"is_deleted": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "Deletion status of the ApiKey",
 			},
 		},
 	}
@@ -63,9 +48,8 @@ func resourceCreateApiKey(ctx context.Context, d *schema.ResourceData, m interfa
 
 	// Prepare installation payload
 	createPayload := map[string]interface{}{
-		"name":               name,
-		"role":               role,
-		"system_description": "Hanswurst",
+		"name": name,
+		"role": role,
 	}
 
 	// Create API Key
@@ -108,13 +92,11 @@ func resourceReadApiKey(ctx context.Context, d *schema.ResourceData, m interface
 			"apikey compared": apikey,
 		})
 
-		if apikey["reference_id"].(string) == referenceID {
+		if apikey["reference_id"].(string) == referenceID && apikey["is_deleted"] != true {
 			// Update resource attributes
 			d.Set("reference_id", apikey["reference_id"])
-			d.Set("created_at", apikey["created_at"])
-			d.Set("created_by", apikey["created_by"])
 			d.Set("secret", apikey["secret"])
-			d.Set("is_deleted", apikey["is_deleted"])
+			d.Set("role", apikey["role"])
 			return nil
 		}
 	}
@@ -125,13 +107,10 @@ func resourceReadApiKey(ctx context.Context, d *schema.ResourceData, m interface
 }
 
 func resourceUpdateApiKey(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	// Check if reference_id has changed
-	if d.HasChange("reference_id") {
-		return diag.Errorf("cannot update API key reference ID")
-	}
+	return diag.Errorf("cannot update API key values")
 
 	// Refresh the state by calling read
-	return resourceReadApiKey(ctx, d, m)
+	// return resourceReadApiKey(ctx, d, m)
 }
 
 func resourceDeleteApiKey(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
